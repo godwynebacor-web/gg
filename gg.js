@@ -694,7 +694,8 @@ function updatePasswordRequirements(password) {
 // ============================================
 (function initLandingPage() {
   const pagePath = window.location.pathname;
-  if (pagePath.includes('gg.html') || pagePath === '/' || pagePath.endsWith('/') || (!pagePath.includes('dashboard') && !pagePath.includes('admin'))) {
+  // Updated to check for index.html instead of gg.html
+  if (pagePath.includes('index.html') || pagePath === '/' || pagePath.endsWith('/') || (!pagePath.includes('dashboard') && !pagePath.includes('admin'))) {
     
     setupPasswordToggle('toggleLoginPassword', 'loginPassword');
     setupPasswordToggle('toggleSignupPassword', 'signupPassword');
@@ -929,7 +930,7 @@ function updatePasswordRequirements(password) {
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   if (!currentUser) {
-    window.location.href = 'gg.html';
+    window.location.href = 'index.html'; // Updated from gg.html
     return;
   }
   
@@ -1370,7 +1371,7 @@ function updatePasswordRequirements(password) {
     logoutTopBtn.addEventListener('click', function() {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('isAdminLoggedIn');
-      window.location.href = 'gg.html';
+      window.location.href = 'index.html'; // Updated from gg.html
     });
   }
   
@@ -1384,7 +1385,7 @@ function updatePasswordRequirements(password) {
   if (window.location.pathname.includes('admin.html')) {
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
     if (!isAdminLoggedIn) {
-      window.location.href = 'gg.html';
+      window.location.href = 'index.html'; // Updated from gg.html
       return;
     }
     
@@ -1756,7 +1757,7 @@ function updatePasswordRequirements(password) {
     if (adminLogoutButton) {
       adminLogoutButton.addEventListener('click', function() {
         localStorage.removeItem('isAdminLoggedIn');
-        window.location.href = 'gg.html';
+        window.location.href = 'index.html'; // Updated from gg.html
       });
     }
   }
