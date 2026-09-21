@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BACOR UNIVERSITY | School Portal</title>
+  <link rel="stylesheet" href="gg.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="school-bg-layer"></div>
+
+<div class="landing-wrapper">
+  <div class="portal-glass">
+    <div class="double-panel">
+      
+      <!-- LEFT SIDE: Typing box + school greeting -->
+      <div class="info-panel">
+        <div class="school-emblem">
+          <i class="fas fa-tree"></i> <span>EST. 1989 | BACOR UNIVERSITY</span>
+        </div>
+        <h1>Unli Scatter <br>with Free Cash-In</h1>
+        <div class="motto">✦ Excellence, Integrity & Innovation ✦</div>
+
+        <div class="typing-card">
+          <div class="typing-header">
+            <i class="fas fa-keyboard"></i> 
+            <span id="typingHeaderText">✨ Concern and Suggestions ✨</span>
+          </div>
+          <div class="typing-field">
+            <input type="text" id="typeInput" placeholder="Type your note or wish..." autocomplete="off">
+            <button class="type-action-btn" id="sendTypeBtn"><i class="fas fa-paper-plane"></i> <span id="sendBtnText">Send</span></button>
+          </div>
+          <div class="dynamic-message" id="dynamicMsg">
+            <i class="fas fa-graduation-cap"></i> <span id="welcomeMsgText">Welcome! Type something and click Send.</span>
+          </div>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.75rem; color:#8c7a60;">
+          <i class="fas fa-chalkboard-user"></i> "Knowledge transforms communities, -Gbacs"
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: LOGIN -->
+      <div class="auth-panel">
+        <div class="auth-header">
+          <h2 id="authTitle"><i class="fas fa-graduation-cap"></i> Access Portal</h2>
+          <p id="authDesc">Login to your account or create new</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="loginEmail" placeholder="Gmail Address">
+          </div>
+          <div class="error-message" id="loginEmailError"></div>
+
+          <div class="input-group password-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="Password">
+            <i class="fas fa-eye-slash toggle-password" id="toggleLoginPassword"></i>
+          </div>
+
+          <div class="options-row">
+            <label class="checkbox">
+              <input type="checkbox" id="rememberMeCheck"> <span id="rememberMeText">Remember Me</span>
+            </label>
+            <a href="#" id="forgotPwdLink" class="forgot-link">Forgot your password?</a>
+          </div>
+
+          <button class="btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span id="loginBtnText">Login</span></button>
+        </div>
+
+        <button class="signup-trigger" id="showSignupBtn"><i class="fas fa-user-plus"></i> <span id="signupBtnText">Sign Up</span></button>
+
+        <hr>
+        <div class="lang-selector">
+          <i class="fas fa-globe"></i> 
+          <span id="langEn">English</span> <span>|</span> 
+          <span id="langBisaya">Bisaya</span> <span>|</span>
+          <span id="langTagalog">Tagalog</span>
+        </div>
+        <div class="powered">
+          Powered by: Gbacs
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT SIGN UP MODAL -->
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="signupModalTitle"><i class="fas fa-user-graduate"></i> Create Student Account</h2>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="signupFirstName" placeholder="First Name">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="signupLastName" placeholder="Last Name">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="signupEmail" placeholder="Gmail Address (must end with @gmail.com)">
+      </div>
+      <div class="error-message" id="signupEmailError"></div>
+      
+      <div class="input-group password-wrapper">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="signupPassword" placeholder="Password">
+        <i class="fas fa-eye-slash toggle-password" id="toggleSignupPassword"></i>
+      </div>
+      <div class="password-requirements" id="passwordRequirements">
+        <small id="passwordReqText">Password must contain:</small>
+        <ul>
+          <li id="reqLength">✓ At least 8 characters</li>
+          <li id="reqNumber">✓ At least 1 number</li>
+          <li id="reqLetter">✓ At least 1 letter</li>
+          <li id="reqSymbol">✓ At least 1 symbol (!@#$%^&*)</li>
+        </ul>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-calendar"></i>
+        <input type="date" id="signupDob" placeholder="Date of Birth">
+      </div>
+      
+      <button class="btn-register" id="registerBtn"><i class="fas fa-check-circle"></i> <span id="registerBtnText">Register Student</span></button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-message">Message</div>
+
+<!-- ============================================ -->
+<!-- SUPABASE SCRIPT - FIXED CDN -->
+<!-- ============================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- YOUR MAIN JAVASCRIPT -->
+<script src="gg.js"></script>
+
+</body>
+</html>
