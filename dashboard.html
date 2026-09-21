@@ -18,7 +18,7 @@
   (function() {
     const checkUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!checkUser) {
-      window.location.href = 'gg.html';
+      window.location.href = 'index.html'; // Updated from gg.html
       return;
     }
     if (checkUser.userType === 'admin') {
