@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info:Sched - Resident Dashboard</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="gg.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+</head>
+<body class="app-shell">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo" onclick="goToLandingPage()">Info:Sched</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-view="dashboard">
+                <span class="icon-text">▤</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-view="appointment">
+                <span class="icon-text">▦</span>
+                <span>Appointment</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img id="userAvatarImg" src="" alt="User Avatar">
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role">Resident</div>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <button class="profile-btn" onclick="openEditProfile()">
+                    <span class="icon-text">✎</span>
+                    <span>Edit Profile</span>
+                </button>
+            </div>
+            <button type="button" class="logout-btn" onclick="logout()">
+                <span class="icon-text">←</span>
+                <span>Log out</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-header">
+            <div class="page-title">Dashboard</div>
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <span class="icon-text">◔</span>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===================== VIEW 1: DASHBOARD ===================== -->
+        <div id="dashboard-view">
+            <div class="dashboard-content">
+                <div class="welcome-section">
+                    <h1 class="welcome-title" id="welcomeTitle">Welcome!</h1>
+                    <p class="welcome-subtitle">Stay updated with community news, events, and your appointments.</p>
+                </div>
+
+                <div class="announcement-banner" id="announcementBanner">
+                    <div class="announcement-icon">
+                        <span class="icon-text">◤</span>
+                    </div>
+                    <div class="announcement-content">
+                        <div class="announcement-title" id="announcementTitle">Loading announcement...</div>
+                        <div class="announcement-text" id="announcementText">Please wait while we load the latest announcement.</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-layout">
+                    <div class="news-column">
+                        <div class="appointments-section" id="appointmentsSection">
+                            <div class="section-header">
+                                <h2 class="section-title">Your Appointments</h2>
+                                <div class="view-all" onclick="goToAppointmentPage()">View All</div>
+                            </div>
+                            <div class="appointments-list" id="appointmentsList">
+                                <div class="no-appointments" id="noAppointments">
+                                    <span class="icon-large">▢</span>
+                                    <p>Loading appointments...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="news-section" id="newsSection">
+                            <div class="section-header">
+                                <h2 class="section-title">Community News & Updates</h2>
+                                <div class="view-all" onclick="showAllNews()">View All</div>
+                            </div>
+
+                            <div class="filter-controls">
+                                <select class="filter-select" id="year-filter">
+                                    <option value="">All Years</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                </select>
+                                <select class="filter-select" id="month-filter">
+                                    <option value="">All Months</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                                <select class="filter-select" id="category-filter">
+                                    <option value="">All Categories</option>
+                                    <option value="announcement">Announcements</option>
+                                    <option value="update">Updates</option>
+                                    <option value="event">Events</option>
+                                </select>
+                            </div>
+
+                            <div class="featured-news" id="featuredNewsContainer"></div>
+
+                            <div class="section-header">
+                                <h3 class="section-title">Recent News</h3>
+                            </div>
+                            <div class="recent-news-list" id="recentNewsContainer"></div>
+                        </div>
+
+                        <div class="full-view" id="allNewsView">
+                            <div class="full-view-header">
+                                <button class="back-button" onclick="showResidentView('dashboard')">
+                                    <span class="icon-text">←</span>
+                                    <span>Back to Dashboard</span>
+                                </button>
+                                <h2 class="full-view-title">All Community News</h2>
+                            </div>
+                            <div class="recent-news-list" id="allNewsContainer"></div>
+                        </div>
+
+                        <div class="news-detail" id="newsDetailView">
+                            <div class="full-view-header">
+                                <button class="back-button" onclick="showAllNews()">
+                                    <span class="icon-text">←</span>
+                                    <span>Back to News</span>
+                                </button>
+                                <h2 class="full-view-title">News Details</h2>
+                            </div>
+                            <div class="news-detail-content">
+                                <h1 class="news-detail-title" id="detailTitle">Loading news...</h1>
+                                <div class="news-detail-meta">
+                                    <span id="detailDate">Loading...</span>
+                                    <span id="detailAuthor">Loading...</span>
+                                </div>
+                                <div class="news-detail-image" id="detailImage">
+                                    <span class="icon-text">▤</span>
+                                </div>
+                                <div class="news-detail-content" id="detailContent">
+                                    <p>Loading content...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="events-column">
+                        <div class="events-section" id="eventsSection">
+                            <div class="section-header">
+                                <h2 class="section-title">Upcoming Events</h2>
+                                <div class="view-all" onclick="showAllEvents()">View All</div>
+                            </div>
+                            <div class="events-list" id="eventsListContainer"></div>
+                        </div>
+
+                        <div class="full-view" id="allEventsView">
+                            <div class="full-view-header">
+                                <button class="back-button" onclick="showResidentView('dashboard')">
+                                    <span class="icon-text">←</span>
+                                    <span>Back to Dashboard</span>
+                                </button>
+                                <h2 class="full-view-title">All Events</h2>
+                            </div>
+                            <div class="events-tabs">
+                                <div class="tab active" onclick="residentSwitchEventsTab('upcoming')">Upcoming Events</div>
+                                <div class="tab" onclick="residentSwitchEventsTab('past')">Past Events</div>
+                            </div>
+                            <div class="tab-content active" id="upcomingTab">
+                                <div class="events-list" id="upcomingEventsContainer"></div>
+                            </div>
+                            <div class="tab-content" id="pastTab">
+                                <div class="events-list" id="pastEventsContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== VIEW 2: APPOINTMENT ===================== -->
+        <div id="appointment-view" style="display: none;">
+            <div class="appointment-content">
+                <div class="welcome-section">
+                    <h1 class="welcome-title">Schedule an Appointment</h1>
+                    <p class="welcome-subtitle">Book your barangay appointment with secure verification</p>
+                </div>
+
+                <div class="status-message" id="statusMessage"></div>
+
+                <div class="appointment-form-container" id="appointmentFormContainer">
+                    <form id="appointmentForm">
+                        <div class="form-section">
+                            <h2 class="section-title">
+                                <span class="icon-text">▤</span>
+                                Application Details
+                            </h2>
+
+                            <div class="form-group">
+                                <label class="form-label" for="serviceType">Service Type</label>
+                                <div class="app-type-options">
+                                    <div class="app-type-option" onclick="selectAppType(this, 'barangay-clearance')">
+                                        <div class="app-type-icon"><span class="icon-text">▤</span></div>
+                                        <div class="app-type-title">Barangay Clearance</div>
+                                        <div class="app-type-desc">For employment, business, or other official purposes</div>
+                                    </div>
+                                    <div class="app-type-option" onclick="selectAppType(this, 'business-permit')">
+                                        <div class="app-type-icon"><span class="icon-text">⌂</span></div>
+                                        <div class="app-type-title">Business Permit</div>
+                                        <div class="app-type-desc">For new business registration or renewal</div>
+                                    </div>
+                                    <div class="app-type-option" onclick="selectAppType(this, 'blotter')">
+                                        <div class="app-type-icon"><span class="icon-text">⚑</span></div>
+                                        <div class="app-type-title">Blotter</div>
+                                        <div class="app-type-desc">For reporting incidents or filing complaints</div>
+                                    </div>
+                                    <div class="app-type-option" onclick="selectAppType(this, 'katarungang-pambarangay')">
+                                        <div class="app-type-icon"><span class="icon-text">⚖</span></div>
+                                        <div class="app-type-title">Katarungang Pambarangay</div>
+                                        <div class="app-type-desc">For dispute resolution and mediation</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="serviceType" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="purpose">Purpose of Application</label>
+                                <textarea class="form-control form-textarea" id="purpose" placeholder="Please explain the purpose of your application..." required></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="firstName">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="lastName">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="address">Address</label>
+                                    <input type="text" class="form-control" id="address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contactNumber">Contact Number</label>
+                                    <input type="tel" class="form-control" id="contactNumber" placeholder="+63 XXX XXX XXXX" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2 class="section-title">
+                                <span class="icon-text">▦</span>
+                                Schedule Your Appointment
+                            </h2>
+
+                            <div class="calendar-container">
+                                <div class="calendar-header">
+                                    <div class="calendar-nav">
+                                        <button type="button" class="calendar-nav-btn" onclick="changeMonth(-1)">‹</button>
+                                        <div class="calendar-month" id="currentMonth">Loading…</div>
+                                        <button type="button" class="calendar-nav-btn" onclick="changeMonth(1)">›</button>
+                                    </div>
+                                </div>
+
+                                <div class="calendar-grid" id="calendarGrid"></div>
+                                <div class="time-slots" id="timeSlots"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToDashboard()">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="confirmAppointment()">Confirm Appointment</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="confirmation-section" id="confirmationSection" style="display: none;">
+                    <h2 class="confirmation-title">Confirm Your Appointment</h2>
+
+                    <div class="confirmation-details" id="confirmationDetails"></div>
+
+                    <div class="email-verification-box" id="emailVerificationBox">
+                        <div class="email-verification-title">
+                            <span class="icon-text">✉</span>
+                            Email Verification
+                        </div>
+                        <p>We've sent a 6-digit verification code to your email address. Please enter it below to verify your appointment.</p>
+
+                        <div class="two-factor-section" id="twoFactorSection">
+                            <div class="verification-code">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                                <input type="text" class="code-input" maxlength="1" pattern="[0-9]">
+                            </div>
+                            <div class="resend-code">
+                                <span>Didn't receive the code? </span>
+                                <span class="resend-link" onclick="resendCode()">Resend Code</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="id-verification-section" id="idVerificationSection">
+                        <h2 class="section-title">
+                            <span class="icon-text">▣</span>
+                            ID Verification
+                        </h2>
+
+                        <p>Please select one valid ID to present during your appointment:</p>
+
+                        <div class="id-options">
+                            <div class="id-option" onclick="selectIdOption(this, 'drivers_license')">
+                                <input type="radio" name="validId" value="drivers_license" required>
+                                <span>Driver's License</span>
+                            </div>
+                            <div class="id-option" onclick="selectIdOption(this, 'passport')">
+                                <input type="radio" name="validId" value="passport">
+                                <span>Passport</span>
+                            </div>
+                            <div class="id-option" onclick="selectIdOption(this, 'national_id')">
+                                <input type="radio" name="validId" value="national_id">
+                                <span>National ID</span>
+                            </div>
+                            <div class="id-option" onclick="selectIdOption(this, 'postal_id')">
+                                <input type="radio" name="validId" value="postal_id">
+                                <span>Postal ID</span>
+                            </div>
+                            <div class="id-option" onclick="selectIdOption(this, 'voters_id')">
+                                <input type="radio" name="validId" value="voters_id">
+                                <span>Voter's ID</span>
+                            </div>
+                            <div class="id-option" onclick="selectIdOption(this, 'senior_citizen_id')">
+                                <input type="radio" name="validId" value="senior_citizen_id">
+                                <span>Senior Citizen ID</span>
+                            </div>
+                        </div>
+
+                        <div class="id-verification-images" id="idVerificationImages">
+                            <p><strong>Upload ID Images:</strong> Please upload both front and back sides of your selected ID.</p>
+
+                            <div class="file-input-container">
+                                <div class="file-input-wrapper">
+                                    <label for="frontImageUpload">Front of ID:</label>
+                                    <div class="custom-file-input" onclick="document.getElementById('frontImageUpload').click()">
+                                        <span id="frontFileName">No file chosen</span>
+                                        <span class="icon-text">↑</span>
+                                    </div>
+                                    <input type="file" class="file-input" id="frontImageUpload" accept="image/*" style="display: none;">
+                                </div>
+
+                                <div class="file-input-wrapper">
+                                    <label for="backImageUpload">Back of ID:</label>
+                                    <div class="custom-file-input" onclick="document.getElementById('backImageUpload').click()">
+                                        <span id="backFileName">No file chosen</span>
+                                        <span class="icon-text">↑</span>
+                                    </div>
+                                    <input type="file" class="file-input" id="backImageUpload" accept="image/*" style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="image-preview-container" id="imagePreviewContainer" style="display: none;">
+                                <div class="image-preview-item">
+                                    <img id="frontImagePreview" src="" alt="Front of ID">
+                                    <div class="image-preview-label">Front of ID</div>
+                                </div>
+                                <div class="image-preview-item">
+                                    <img id="backImagePreview" src="" alt="Back of ID">
+                                    <div class="image-preview-label">Back of ID</div>
+                                </div>
+                            </div>
+
+                            <div class="image-requirements">
+                                <h4><span class="icon-text">ℹ</span> Image Requirements:</h4>
+                                <ul>
+                                    <li>Clear, well-lit photos</li>
+                                    <li>All text must be readable</li>
+                                    <li>No glare or reflections</li>
+                                    <li>Full ID must be visible</li>
+                                    <li>File size: Max 5MB per image</li>
+                                    <li>Upload both front and back images</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="image-progress" id="imageProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Uploading images...</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="backToForm()">Back to Form</button>
+                        <button type="button" class="btn btn-primary" onclick="submitAppointment()" id="submitBtn" disabled>Submit Appointment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Profile</h2>
+                <button class="close-modal" onclick="closeEditProfile()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Profile Photo</label>
+                    <div class="avatar-upload">
+                        <div class="avatar-preview">
+                            <img id="avatarPreview" src="" alt="Avatar Preview">
+                        </div>
+                        <input type="file" class="form-control" id="avatarInput" accept="image/*" onchange="previewAvatar()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="fullNameInput" value="">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="emailInput" value="">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" id="phoneInput" value="">
+                </div>
+
+                <div class="password-section">
+                    <div class="password-section-title">Change Password</div>
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeEditProfile()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="gg.js"></script>
+</body>
+</html>
